@@ -385,6 +385,31 @@
             background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
         }
 
+        /* Hover Video Functionality */
+        .case-study-video iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .case-study-video.playing iframe {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .case-study-video.playing img,
+        .case-study-video.playing .video-play-button,
+        .case-study-video.playing .video-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .case-study-content {
             padding: 1rem 0;
         }
@@ -849,10 +874,15 @@
             <h2 class="section-title">Featured Work</h2>
             
             <div class="case-study">
-                <div class="case-study-video" onclick="openVideoModal('1103919211', 'Applied Technologies')">
+                <div class="case-study-video" 
+                     data-video-id="1103919211" 
+                     onclick="openVideoModal('1103919211', 'Applied Technologies')"
+                     onmouseenter="startHoverVideo(this)"
+                     onmouseleave="stopHoverVideo(this)">
                     <img src="https://vumbnail.com/1103919211.jpg" alt="Applied Technologies Video" loading="lazy">
                     <div class="video-overlay"></div>
                     <div class="video-play-button"></div>
+                    <iframe src="" frameborder="0" allow="autoplay; fullscreen"></iframe>
                 </div>
                 <div class="case-study-content">
                     <h3>Applied Technologies</h3>
@@ -867,10 +897,15 @@
             </div>
 
             <div class="case-study">
-                <div class="case-study-video" onclick="openVideoModal('1106375315', 'Jacuzzi Bath Remodel')">
+                <div class="case-study-video" 
+                     data-video-id="1106375315" 
+                     onclick="openVideoModal('1106375315', 'Jacuzzi Bath Remodel')"
+                     onmouseenter="startHoverVideo(this)"
+                     onmouseleave="stopHoverVideo(this)">
                     <img src="https://vumbnail.com/1106375315.jpg" alt="Jacuzzi Bath Remodel Video" loading="lazy">
                     <div class="video-overlay"></div>
                     <div class="video-play-button"></div>
+                    <iframe src="" frameborder="0" allow="autoplay; fullscreen"></iframe>
                 </div>
                 <div class="case-study-content">
                     <h3>Jacuzzi Bath Remodel</h3>
@@ -885,10 +920,15 @@
             </div>
 
             <div class="case-study">
-                <div class="case-study-video" onclick="openVideoModal('960746274', 'Sprout Marketing')">
+                <div class="case-study-video" 
+                     data-video-id="960746274" 
+                     onclick="openVideoModal('960746274', 'Sprout Marketing')"
+                     onmouseenter="startHoverVideo(this)"
+                     onmouseleave="stopHoverVideo(this)">
                     <img src="https://vumbnail.com/960746274.jpg" alt="Sprout Marketing Video" loading="lazy">
                     <div class="video-overlay"></div>
                     <div class="video-play-button"></div>
+                    <iframe src="" frameborder="0" allow="autoplay; fullscreen"></iframe>
                 </div>
                 <div class="case-study-content">
                     <h3>Sprout Marketing</h3>
@@ -985,6 +1025,8 @@
         // Debug log to verify script is loading
         console.log('Lightbox Digital script loaded');
 
+        let hoverVideoTimeouts = new Map();
+
         // Modal functions with improved error handling
         function openModal() {
             console.log('Opening modal');
@@ -1059,6 +1101,51 @@
                 }
             } catch (error) {
                 console.error('Error closing video modal:', error);
+            }
+        }
+
+        function startHoverVideo(element) {
+            console.log('Starting hover video');
+            try {
+                const videoId = element.dataset.videoId;
+                const iframe = element.querySelector('iframe');
+                
+                if (videoId && iframe) {
+                    // Clear any existing timeout for this element
+                    if (hoverVideoTimeouts.has(element)) {
+                        clearTimeout(hoverVideoTimeouts.get(element));
+                    }
+                    
+                    // Set a timeout to start the video after a brief delay
+                    const timeout = setTimeout(() => {
+                        iframe.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&background=1`;
+                        element.classList.add('playing');
+                    }, 500); // 500ms delay before autoplay starts
+                    
+                    hoverVideoTimeouts.set(element, timeout);
+                }
+            } catch (error) {
+                console.error('Error starting hover video:', error);
+            }
+        }
+
+        function stopHoverVideo(element) {
+            console.log('Stopping hover video');
+            try {
+                const iframe = element.querySelector('iframe');
+                
+                // Clear the timeout if it exists
+                if (hoverVideoTimeouts.has(element)) {
+                    clearTimeout(hoverVideoTimeouts.get(element));
+                    hoverVideoTimeouts.delete(element);
+                }
+                
+                if (iframe) {
+                    iframe.src = '';
+                    element.classList.remove('playing');
+                }
+            } catch (error) {
+                console.error('Error stopping hover video:', error);
             }
         }
 
