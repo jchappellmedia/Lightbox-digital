@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Setup - Lightbox Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Avenir Next', 'Helvetica Bold', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(135deg, #000 0%, #111 100%);
+        }
+
+        .setup-container {
+            background-color: #111;
+            padding: 3rem;
+            border-radius: 15px;
+            border-left: 4px solid #ffd700;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .setup-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+
+        .setup-header p {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .step.active {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .step.completed {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background-color: #222;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .password-requirements {
+            background-color: #222;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+        }
+
+        .requirement.met {
+            color: #28a745;
+        }
+
+        .requirement::before {
+            content: "○";
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .requirement.met::before {
+            content: "✓";
+            color: #28a745;
+        }
+
+        .btn {
+            background-color: #ffd700;
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #ffed4a;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .alert.error {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffd700;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-message h2 {
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .setup-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <img src="Images/logo.png" alt="Lightbox Digital" class="logo">
+            <h1>Account Setup</h1>
+            <p>Complete your account setup to access the admin system</p>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+            <div class="step" id="step3">3</div>
+        </div>
+
+        <div class="alert success" id="successAlert"></div>
+        <div class="alert error" id="errorAlert"></div>
+        <div class="loading" id="loading"></div>
+
+        <!-- Step 1: Login with temporary credentials -->
+        <div class="form-section active" id="section1">
+            <h3 style="color: #ffd700; margin-bottom: 1rem;">Step 1: Verify Your Identity</h3>
+            <p style="color: #ccc; margin-bottom: 1.5rem;">Please log in with the temporary credentials provided in your invitation email.</p>
+            
+            <form id="tempLoginForm">
+                <div class="form-group">
+                    <label for="tempUsername">Temporary Username</label>
+                    <input type="text" id="tempUsername" name="tempUsername" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tempPassword">Temporary Password</label>
+                    <input type="password" id="tempPassword" name="tempPassword" required autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn" id="tempLoginBtn">Verify Identity</button>
+            </form>
+        </div>
+
+        <!-- Step 2: Choose new username and password -->
+        <div class="form-section" id="section2">
+            <h3 style="color: #ffd700; margin-bottom: 1rem;">Step 2: Create Your Account</h3>
+            <p style="color: #ccc; margin-bottom: 1.5rem;">Choose a username and secure password for your account.</p>
+            
+            <form id="setupForm">
+                <div class="form-group">
+                    <label for="newUsername">Choose Username</label>
+                    <input type="text" id="newUsername" name="newUsername" required minlength="3" maxlength="20">
+                    <small style="color: #ccc;">3-20 characters, letters and numbers only</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" name="newPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="password-requirements">
+                    <strong style="color: #ffd700;">Password Requirements:</strong>
+                    <div class="requirement" id="req-length">At least 8 characters long</div>
+                    <div class="requirement" id="req-upper">At least one uppercase letter</div>
+                    <div class="requirement" id="req-lower">At least one lowercase letter</div>
+                    <div class="requirement" id="req-number">At least one number</div>
+                    <div class="requirement" id="req-match">Passwords match</div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
+                    <button type="submit" class="btn" id="setupBtn" disabled>Create Account</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div class="form-section" id="section3">
+            <div class="success-message">
+                <h2>🎉 Setup Complete!</h2>
+                <p style="color: #ccc; margin-bottom: 2rem;">Your account has been successfully created. You can now log in to the admin system with your new credentials.</p>
+                
+                <div style="background-color: #222; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <strong style="color: #ffd700;">Your New Credentials:</strong><br>
+                    <span style="color: #ccc;">Username: </span><span id="finalUsername"></span><br>
+                    <span style="color: #ccc;">Password: </span><span style="color: #28a745;">●●●●●●●●</span> (as you chose)
+                </div>
+                
+                <button class="btn" onclick="goToLogin()">Go to Admin Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your actual Google Apps Script Web App URL
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+        let currentStep = 1;
+        let userEmail = '';
+
+        // Password validation
+        document.getElementById('newPassword').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+        document.getElementById('newUsername').addEventListener('input', validateUsername);
+
+        // Step 1: Temporary login
+        document.getElementById('tempLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('tempUsername').value.trim();
+            const password = document.getElementById('tempPassword').value;
+            
+            if (!username || !password) {
+                showAlert('error', 'Please enter both username and password');
+                return;
+            }
+
+            showLoading(true);
+            document.getElementById('tempLoginBtn').disabled = true;
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'verifyTempLogin',
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    userEmail = result.email;
+                    nextStep();
+                } else {
+                    showAlert('error', result.message || 'Invalid temporary credentials');
+                }
+            } catch (error) {
+                console.error('Temp login error:', error);
+                showAlert('error', 'Connection error. Please try again.');
+            } finally {
+                showLoading(false);
+                document.getElementById('tempLoginBtn').disabled = false;
+            }
+        });
+
+        // Step 2: Account setup
+        document.getElementById('setupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newUsername = document.getElementById('newUsername').value.trim();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!isPasswordValid() || newPassword !== confirmPassword) {
+                showAlert('error', 'Please meet all password requirements');
+                return;
+            }
+
+            showLoading(true);
+            document.getElementById('setupBtn').disabled = true;
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'completeUserSetup',
+                        email: userEmail,
+                        newUsername: newUsername,
+                        newPassword: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('finalUsername').textContent = newUsername;
+                    nextStep();
+                } else {
+                    showAlert('error', result.message || 'Failed to complete setup');
+                }
+            } catch (error) {
+                console.error('Setup error:', error);
+                showAlert('error', 'Connection error. Please try again.');
+            } finally {
+                showLoading(false);
+                document.getElementById('setupBtn').disabled = false;
+            }
+        });
+
+        function validatePassword() {
+            const password = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            // Length check
+            const hasLength = password.length >= 8;
+            updateRequirement('req-length', hasLength);
+            
+            // Uppercase check
+            const hasUpper = /[A-Z]/.test(password);
+            updateRequirement('req-upper', hasUpper);
+            
+            // Lowercase check
+            const hasLower = /[a-z]/.test(password);
+            updateRequirement('req-lower', hasLower);
+            
+            // Number check
+            const hasNumber = /\d/.test(password);
+            updateRequirement('req-number', hasNumber);
+            
+            // Match check
+            const passwordsMatch = password === confirm && password.length > 0;
+            updateRequirement('req-match', passwordsMatch);
+            
+            // Enable/disable submit button
+            const allValid = hasLength && hasUpper && hasLower && hasNumber && passwordsMatch;
+            document.getElementById('setupBtn').disabled = !allValid;
+            
+            return allValid;
+        }
+
+        function validateUsername() {
+            const username = document.getElementById('newUsername').value;
+            const isValid = /^[a-zA-Z0-9]{3,20}$/.test(username);
+            
+            const input = document.getElementById('newUsername');
+            if (username.length > 0) {
+                input.style.borderColor = isValid ? '#28a745' : '#dc3545';
+            } else {
+                input.style.borderColor = '#333';
+            }
+            
+            return isValid;
+        }
+
+        function updateRequirement(id, met) {
+            const element = document.getElementById(id);
+            if (met) {
+                element.classList.add('met');
+            } else {
+                element.classList.remove('met');
+            }
+        }
+
+        function isPasswordValid() {
+            const password = document.getElementById('newPassword').value;
+            return password.length >= 8 && 
+                   /[A-Z]/.test(password) && 
+                   /[a-z]/.test(password) && 
+                   /\d/.test(password);
+        }
+
+        function nextStep() {
+            // Mark current step as completed
+            document.getElementById(`step${currentStep}`).classList.add('completed');
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Hide current section
+            document.getElementById(`section${currentStep}`).classList.remove('active');
+            
+            // Move to next step
+            currentStep++;
+            
+            // Show next section and mark step as active
+            document.getElementById(`section${currentStep}`).classList.add('active');
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            hideAlert();
+        }
+
+        function prevStep() {
+            // Remove completed status from current step
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Hide current section
+            document.getElementById(`section${currentStep}`).classList.remove('active');
+            
+            // Move to previous step
+            currentStep--;
+            
+            // Show previous section and mark step as active
+            document.getElementById(`section${currentStep}`).classList.add('active');
+            document.getElementById(`step${currentStep}`).classList.remove('completed');
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            
+            hideAlert();
+        }
+
+        function goToLogin() {
+            window.location.href = 'admin-login.html';
+        }
+
+        function showAlert(type, message) {
+            hideAlert();
+            const alertElement = document.getElementById(type + 'Alert');
+            alertElement.textContent = message;
+            alertElement.style.display = 'block';
+            
+            setTimeout(() => {
+                hideAlert();
+            }, 5000);
+        }
+
+        function hideAlert() {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.display = 'none';
+            });
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

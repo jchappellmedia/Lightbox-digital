@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightbox Digital - Professional Video Production</title>
+    
+    <!-- DNS Prefetch and Preconnect for faster Vimeo loading -->
+    <link rel="preconnect" href="https://player.vimeo.com">
+    <link rel="preconnect" href="https://vimeo.com">
+    <link rel="preconnect" href="https://i.vimeocdn.com">
+    <link rel="dns-prefetch" href="//player.vimeo.com">
+    <link rel="dns-prefetch" href="//vimeo.com">
+    <link rel="dns-prefetch" href="//i.vimeocdn.com">
+    
+    <!-- Preload the hero video -->
+    <link rel="preload" href="https://player.vimeo.com/video/924818967?background=1&autoplay=1&loop=1&muted=1" as="document">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #f5f5f7;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .logo {
+            height: 32px;
+            width: auto;
+            flex-shrink: 0;
+            filter: brightness(1.1);
+        }
+
+        .nav {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+        }
+
+        .nav a {
+            color: #f5f5f7;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.875rem;
+            letter-spacing: -0.01em;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: #f1c40f;
+        }
+
+        .nav a:hover::after,
+        .nav a.active::after {
+            width: 100%;
+        }
+
+        .nav a.active {
+            color: #f1c40f;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            color: #000;
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.8125rem;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(241, 196, 15, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(241, 196, 15, 0.4);
+        }
+
+        .cta-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #f5f5f7;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 2rem;
+            z-index: 999;
+            animation: slideDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-nav.show {
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: block;
+            color: #f5f5f7;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav a:hover,
+        .mobile-nav a.active {
+            color: #f1c40f;
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 70px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .hero-video iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .hero-video::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        .hero-video.loaded::before {
+            opacity: 0;
+        }
+
+        .hero-video.loaded iframe {
+            opacity: 1;
+        }
+
+        .hero-content {
+            z-index: 1;
+            max-width: 800px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #f5f5f7 0%, #f1c40f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(245, 245, 247, 0.8);
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: -0.01em;
+        }
+
+        /* Case Studies */
+        .case-studies {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(26, 26, 26, 0.3) 100%);
+        }
+
+        .case-study {
+            margin-bottom: 6rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .case-study:nth-child(even) {
+            direction: rtl;
+        }
+
+        .case-study:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .case-study-video {
+            width: 100%;
+            height: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        .case-study-video:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .case-study-video img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .case-study-video:hover img {
+            transform: scale(1.05);
+        }
+
+        .video-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(241, 196, 15, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .video-play-button::before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 20px solid #000;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+
+        .case-study-video:hover .video-play-button {
+            transform: translate(-50%, -50%) scale(1.15);
+            background: rgba(241, 196, 15, 1);
+            box-shadow: 0 8px 32px rgba(241, 196, 15, 0.4);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .case-study-video:hover .video-overlay {
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        .case-study-content {
+            padding: 1rem 0;
+        }
+
+        .case-study-content h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #f5f5f7;
+            line-height: 1.1;
+        }
+
+        .case-study-content p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: rgba(245, 245, 247, 0.8);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+        }
+
+        .case-study-review {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .case-study-review:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(241, 196, 15, 0.2);
+        }
+
+        .case-study-review .stars {
+            color: #f1c40f;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .case-study-review .review-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: rgba(245, 245, 247, 0.9);
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .case-study-review .reviewer {
+            font-weight: 500;
+            color: rgba(245, 245, 247, 0.7);
+            font-size: 0.875rem;
+            letter-spacing: -0.01em;
+        }
+
+        /* Reviews */
+        .reviews {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, rgba(26, 26, 26, 0.2) 0%, rgba(10, 10, 10, 0.8) 100%);
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(241, 196, 15, 0.2);
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stars {
+            color: #f1c40f;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .review-text {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: rgba(245, 245, 247, 0.9);
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .reviewer {
+            font-weight: 500;
+            color: rgba(245, 245, 247, 0.7);
+            font-size: 0.875rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #f5f5f7 0%, #f1c40f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .video-modal.show {
+            opacity: 1;
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6);
+            transform: scale(0.9) translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-modal.show .video-modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .video-modal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px;
+        }
+
+        .video-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .video-close:hover {
+            background: rgba(239, 68, 68, 0.9);
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        .video-close::before,
+        .video-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background: #fff;
+            border-radius: 1px;
+        }
+
+        .video-close::before {
+            transform: rotate(45deg);
+        }
+
+        .video-close::after {
+            transform: rotate(-45deg);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            margin: 8% auto;
+            padding: 3rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+            transform: translateY(-50px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: rgba(245, 245, 247, 0.6);
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .close:hover {
+            color: #f5f5f7;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            color: #f5f5f7;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #f5f5f7;
+            font-size: 0.875rem;
+            letter-spacing: -0.01em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #f5f5f7;
+            font-family: inherit;
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f1c40f;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(241, 196, 15, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(241, 196, 15, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #111;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-cta {
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .cta-btn {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .case-study {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .case-study:nth-child(even) {
+                direction: ltr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <img src="Images/logo.png" alt="Lightbox Digital" class="logo">
+        <nav class="nav">
+            <a href="index.html" class="active">Home</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="case-studies.html">Case Studies</a>
+            <a href="reviews.html">Reviews</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+        <button class="cta-btn" onclick="openModal()">Let's Make Something Awesome!</button>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="index.html" class="active">Home</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <button class="cta-btn" onclick="openModal()" style="margin-top: 1rem; width: 100%; font-size: 0.85rem;">Let's Make Something Awesome!</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-video">
+                <iframe src="https://player.vimeo.com/video/924818967?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&speed=1&quality=auto" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen" 
+                        loading="eager"
+                        preload="metadata">
+                </iframe>
+            </div>
+            <div class="hero-content">
+                <h1>Stories That Inspire & Elevate</h1>
+                <p>We're dedicated to serving your vision with integrity, creating meaningful content that helps you reach your highest potential</p>
+                <button class="cta-btn" onclick="openModal()">Start Your Project</button>
+            </div>
+        </div>
+
+        <!-- Featured Case Studies -->
+        <div class="case-studies">
+            <h2 class="section-title">Featured Work</h2>
+            
+            <div class="case-study">
+                <div class="case-study-video" onclick="openVideoModal('1103919211', 'Applied Technologies')">
+                    <img src="https://vumbnail.com/1103919211.jpg" alt="Applied Technologies Video" loading="lazy">
+                    <div class="video-overlay"></div>
+                    <div class="video-play-button"></div>
+                </div>
+                <div class="case-study-content">
+                    <h3>Applied Technologies</h3>
+                    <p>We partnered closely with Applied Technologies to honor their innovative vision. Through careful stewardship of their story, we created content that genuinely represents their commitment to excellence and service to their community.</p>
+                    
+                    <div class="case-study-review">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"Simply put, Josh's work is amazing! His creative vision mixed with his talent result in a partnership that produces great work to visually help tell our client's stories."</p>
+                        <p class="reviewer">— Melody Hudson, Applied Technologies</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-study">
+                <div class="case-study-video" onclick="openVideoModal('1106375315', 'Jacuzzi Bath Remodel')">
+                    <img src="https://vumbnail.com/1106375315.jpg" alt="Jacuzzi Bath Remodel Video" loading="lazy">
+                    <div class="video-overlay"></div>
+                    <div class="video-play-button"></div>
+                </div>
+                <div class="case-study-content">
+                    <h3>Jacuzzi Bath Remodel</h3>
+                    <p>We had the privilege of documenting Jacuzzi's heartfelt mission to serve veterans through their "Baths for the Brave" initiative. Every frame captures their genuine dedication to honoring those who served our country.</p>
+                    
+                    <div class="case-study-review">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"Josh is exceptional! We've worked with him for years during our Baths for the Brave bath crash. He captures the moment to perfection- I highly recommend!"</p>
+                        <p class="reviewer">— Brian Gottlieb, Jacuzzi Bath Remodel</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-study">
+                <div class="case-study-video" onclick="openVideoModal('960746274', 'Sprout Marketing')">
+                    <img src="https://vumbnail.com/960746274.jpg" alt="Sprout Marketing Video" loading="lazy">
+                    <div class="video-overlay"></div>
+                    <div class="video-play-button"></div>
+                </div>
+                <div class="case-study-content">
+                    <h3>Sprout Marketing</h3>
+                    <p>Building lasting relationships with Sprout Marketing, we've consistently delivered content that helps them grow and reach their potential. Our reliable partnership has strengthened their brand and empowered their success in the community.</p>
+                    
+                    <div class="case-study-review">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"Josh is amazing! Talented, thoughtful on details and very creative. We used him at Blandford Homes to shoot our community video and it is one of my favorite videos we have."</p>
+                        <p class="reviewer">— Jason Gillespie, Sprout Marketing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Reviews -->
+        <div class="reviews">
+            <h2 class="section-title">What Clients Say</h2>
+            <div class="review-grid">
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">Josh was great to work with on my company's product launch video. From pre-shoot meetings, to coordinating on site at our factory and the studio, to delivering the final product, everything went smoothly. He took time to get the best angles and best lighting.</p>
+                    <p class="reviewer">Carissa Harris</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">I really enjoyed working with Josh for a client video shoot. He was professional, prepared, and organized. The final videos looked amazing. I would 100% work with him again.</p>
+                    <p class="reviewer">Olivia McFadden</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="review-text">Josh was an absolute pleasure to work with for the corporate videos we had created for a special event. He went above and beyond with our limited timeframe and was extremely communicative throughout the entire process!</p>
+                    <p class="reviewer">Ashley Leslie</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-cta">
+            <h3>Ready to bring your vision to life?</h3>
+            <button class="cta-btn" onclick="openModal()">Let's Make Something Awesome!</button>
+        </div>
+        <p>&copy; 2025 Lightbox Digital. All rights reserved.</p>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <span class="video-close" onclick="closeVideoModal()">&times;</span>
+            <iframe id="videoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Let's Make Something Awesome!</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project">Briefly describe your project *</label>
+                    <textarea id="project" name="project" placeholder="Tell us about your vision, goals, and what you're looking to create..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send My Project Details</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'block';
+            // Force reflow to ensure display change is applied
+            modal.offsetHeight;
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Match the CSS transition duration
+        }
+
+        function openVideoModal(videoId, title) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            
+            // Set the video source with autoplay
+            player.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&color=f1c40f&title=1&byline=1&portrait=0`;
+            
+            modal.classList.add('show');
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            
+            modal.classList.remove('show');
+            
+            setTimeout(() => {
+                player.src = ''; // Stop the video
+                document.body.style.overflow = ''; // Restore body scroll
+            }, 400); // Match the CSS transition duration
+        }
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('show');
+        }
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileNav = document.getElementById('mobileNav');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            
+            if (!mobileNav.contains(event.target) && !toggle.contains(event.target)) {
+                mobileNav.classList.remove('show');
+            }
+        });
+
+        // Close modals when clicking outside of them
+        window.onclick = function(event) {
+            const contactModal = document.getElementById('contactModal');
+            const videoModal = document.getElementById('videoModal');
+            
+            if (event.target == contactModal) {
+                closeModal();
+            }
+            
+            if (event.target == videoModal) {
+                closeVideoModal();
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your inquiry! We\'ll be in touch soon to discuss your project.');
+            closeModal();
+            this.reset();
+        });
+
+        // Auto-close modals on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeVideoModal();
+            }
+        });
+
+        // Preload video thumbnails for better performance
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optimize hero video loading
+            const heroVideo = document.querySelector('.hero-video iframe');
+            const heroContainer = document.querySelector('.hero-video');
+            
+            if (heroVideo && heroContainer) {
+                heroVideo.addEventListener('load', function() {
+                    heroContainer.classList.add('loaded');
+                });
+                
+                // Fallback in case load event doesn't fire
+                setTimeout(() => {
+                    heroContainer.classList.add('loaded');
+                }, 3000);
+                
+                // Force load after a short delay
+                setTimeout(() => {
+                    if (!heroContainer.classList.contains('loaded')) {
+                        heroContainer.classList.add('loaded');
+                    }
+                }, 1500);
+            }
+            
+            // Add loading states and optimize images
+            const videoThumbnails = document.querySelectorAll('.case-study-video img');
+            videoThumbnails.forEach(img => {
+                img.addEventListener('load', function() {
+                    this.parentElement.classList.add('loaded');
+                });
+            });
+            
+            // Preload critical video resources and thumbnails
+            const preloadImages = [
+                'https://vumbnail.com/1103919211.jpg',
+                'https://vumbnail.com/1106375315.jpg',
+                'https://vumbnail.com/960746274.jpg'
+            ];
+            
+            preloadImages.forEach(url => {
+                const link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = url;
+                document.head.appendChild(link);
+            });
+        });
+    </script>
+</body>
+</html>

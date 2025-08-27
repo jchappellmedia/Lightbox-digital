@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Lightbox Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Avenir Next', 'Helvetica Bold', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: #ccc;
+        }
+
+        .nav a.active {
+            color: #ffd700;
+        }
+
+        .cta-btn {
+            background-color: #fff;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #ccc;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: bold;
+        }
+
+        /* About */
+        .about {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .about p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .services,
+        .results {
+            margin: 4rem 0;
+            text-align: left;
+        }
+
+        .services h3,
+        .results h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .services-grid,
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .service-card,
+        .result-card {
+            background-color: #111;
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .service-card h4,
+        .result-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .service-card p {
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .result-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-card li {
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+            color: #ccc;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .result-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .stats {
+            margin: 4rem 0;
+            background-color: #111;
+            padding: 3rem 2rem;
+            border-radius: 10px;
+        }
+
+        .stats h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #222;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: #fff;
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #ccc;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #111;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-cta {
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .services-grid,
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <img src="Images/logo.png" alt="Lightbox Digital" class="logo">
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="case-studies.html">Case Studies</a>
+            <a href="reviews.html">Reviews</a>
+            <a href="about.html" class="active">About</a>
+        </nav>
+        <button class="cta-btn" onclick="openModal()">Let's Make Something Awesome!</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="about">
+            <h2>About Lightbox Digital</h2>
+            <p>We believe in the stewardship of your vision and the responsibility that comes with telling your story. Our approach combines genuine care for your success with unwavering commitment to excellence, ensuring every project helps you reach your highest potential.</p>
+            
+            <p>Through years of dedicated service in video production and photography, we've built lasting relationships founded on trust, reliability, and mutual growth. We understand that great content doesn't just look beautiful—it serves a greater purpose and strengthens communities.</p>
+            
+            <p>Our mission is simple: to be faithful stewards of your story while helping you inspire and elevate others. Whether you're building your brand, serving your community, or sharing your values, we're here to support your journey with integrity and excellence.</p>
+
+            <div class="results">
+                <h3>Proven Results for Our Clients</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h4>🤝 Building Lasting Relationships</h4>
+                        <ul>
+                            <li><strong>Helped Applied Technologies reach new heights</strong> by faithfully stewarding their growth story over multiple projects</li>
+                            <li><strong>Trusted by repeat clients</strong> who return because they know we genuinely care about their success</li>
+                            <li><strong>Strengthened community connections</strong> by helping local businesses authentically share their values and missions</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>⭐ Commitment to Excellence</h4>
+                        <ul>
+                            <li><strong>Maintained 5.0-star reputation</strong> through consistent dedication to quality and service</li>
+                            <li><strong>Delivered projects with integrity</strong> completing 98% on-time and 92% within budget</li>
+                            <li><strong>Improved communication and efficiency</strong> reducing client revision cycles by 50% through careful planning</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>🎬 Premium Production</h4>
+                        <ul>
+                            <li><strong>Partnered with CEOs and executives</strong> on high-stakes corporate projects</li>
+                            <li><strong>Led teams of 5-20 professionals</strong> to deliver complex video productions</li>
+                            <li><strong>Created inspiring brand stories for Jacuzzi</strong> showcasing their commitment to supporting Veterans</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>🚀 Innovation & Efficiency</h4>
+                        <ul>
+                            <li><strong>Slashed creative production times by 30%</strong> using cutting-edge AI tools and workflows</li>
+                            <li><strong>Streamlined asset management</strong> reducing search and retrieval time by over 50%</li>
+                            <li><strong>Integrated advanced analytics</strong> to monitor campaign performance and ROI</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>🏡 Real Estate Excellence</h4>
+                        <ul>
+                            <li><strong>Produced award-winning content for Blandford Homes</strong> model home showcases</li>
+                            <li><strong>Built strong partnerships with realtors and developers</strong> through consistently exceptional work</li>
+                            <li><strong>Mastered architectural photography</strong> with proper lighting and composition techniques</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4>⚡ Technical Mastery</h4>
+                        <ul>
+                            <li><strong>Expert proficiency</strong> in Sony FX cameras, DaVinci Resolve, Adobe Creative Suite</li>
+                            <li><strong>Advanced motion graphics</strong> and visual effects for premium client projects</li>
+                            <li><strong>Professional lighting techniques</strong> including Aperture lighting systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+                <h3>Our Services</h3>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h4>Corporate Storytelling</h4>
+                        <p>We partner with organizations to authentically share their mission and values. From leadership stories to company culture, we help you build genuine connections that inspire trust and growth in your community.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <h4>Community Impact Videos</h4>
+                        <p>Documenting the difference you make in people's lives. Whether it's nonprofit work, community service, or social impact initiatives, we capture the heart behind your mission to inspire others to get involved.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <h4>Event & Milestone Documentation</h4>
+                        <p>Preserving the meaningful moments that matter most. From family milestones to corporate achievements, we approach each project as stewards of your precious memories and important stories.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <h4>Professional Photography</h4>
+                        <p>Honest, authentic imagery that reflects who you truly are. We believe great photography should capture not just appearance, but character—helping you present your best self with integrity and confidence.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <h4>Brand Development Support</h4>
+                        <p>Helping you discover and share what makes you unique. We work alongside you to develop messaging and visuals that genuinely reflect your values and help you serve others more effectively.</p>
+                    </div>
+                    
+                    <div class="service-card">
+                        <h4>Excellence in Post-Production</h4>
+                        <p>Careful attention to every detail reflects our commitment to excellence. Through thoughtful editing, color work, and sound design, we ensure your final product honors your vision and serves your goals.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <h3>Why Choose Lightbox Digital</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">100+</span>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">5★</span>
+                        <div class="stat-label">Average Client Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24hr</span>
+                        <div class="stat-label">Average Response Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">10+</span>
+                        <div class="stat-label">Years Experience</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="cta-btn" onclick="openModal()">Start Your Project Today</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-cta">
+            <h3>Ready to create something amazing?</h3>
+            <button class="cta-btn" onclick="openModal()">Let's Make Something Awesome!</button>
+        </div>
+        <p>&copy; 2025 Lightbox Digital. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Let's Make Something Awesome!</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project">Briefly describe your project *</label>
+                    <textarea id="project" name="project" placeholder="Tell us about your vision, goals, and what you're looking to create..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Send My Project Details</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'block';
+            // Force reflow to ensure display change is applied
+            modal.offsetHeight;
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Match the CSS transition duration
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your inquiry! We\'ll be in touch soon to discuss your project.');
+            closeModal();
+            this.reset();
+        });
+
+        // Auto-close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

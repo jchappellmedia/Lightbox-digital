@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Lightbox Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Avenir Next', 'Helvetica Bold', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background-color: #111;
+            padding: 1rem 2rem;
+            border-bottom: 2px solid #ffd700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-logo img {
+            height: 40px;
+        }
+
+        .admin-logo h1 {
+            color: #ffd700;
+            font-size: 1.5rem;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Main Content */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: #111;
+            padding: 2rem 1rem;
+            border-right: 1px solid #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-menu a {
+            color: #ccc;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #ffd700;
+        }
+
+        /* Cards */
+        .card {
+            background-color: #111;
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            margin-bottom: 2rem;
+        }
+
+        .card h3 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .btn {
+            background-color: #ffd700;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #ffed4a;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #111;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background-color: #222;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #222;
+        }
+
+        /* Status Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .alert.error {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .alert.info {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ffd700;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: #111;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+
+        .stat-label {
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: 2;
+                padding: 1rem;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                gap: 1rem;
+            }
+
+            .sidebar-menu li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .content {
+                order: 1;
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="admin-logo">
+            <img src="Images/logo.png" alt="Lightbox Digital">
+            <h1>Admin Dashboard</h1>
+        </div>
+        <div class="admin-user">
+            <span>Welcome, <strong id="adminUsername"></strong></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="showSection('dashboard')" class="active">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('users')">User Management</a></li>
+                <li><a href="#" onclick="showSection('add-user')">Add New User</a></li>
+                <li><a href="#" onclick="showSection('settings')">Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Alerts -->
+            <div class="alert success" id="successAlert"></div>
+            <div class="alert error" id="errorAlert"></div>
+            <div class="alert info" id="infoAlert"></div>
+            <div class="loading" id="loading"></div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2 class="section-title">Dashboard Overview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalUsers">0</span>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="activeUsers">0</span>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="pendingUsers">0</span>
+                        <div class="stat-label">Pending Invitations</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <button class="btn" onclick="showSection('add-user')">Add New User</button>
+                    <button class="btn btn-secondary" onclick="refreshData()">Refresh Data</button>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section id="users" class="content-section">
+                <h2 class="section-title">User Management</h2>
+                
+                <div class="card">
+                    <h3>All Users</h3>
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Status</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add User Section -->
+            <section id="add-user" class="content-section">
+                <h2 class="section-title">Add New User</h2>
+                
+                <div class="card">
+                    <h3>Create User Account</h3>
+                    <form id="addUserForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="role">User Role *</label>
+                                <select id="role" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="admin">Administrator</option>
+                                    <option value="editor">Editor</option>
+                                    <option value="viewer">Viewer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <input type="text" id="department" name="department" placeholder="Optional">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Notes</label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="Optional notes about this user"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn" id="addUserBtn">Send Invitation Email</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <h2 class="section-title">Settings</h2>
+                
+                <div class="card">
+                    <h3>System Configuration</h3>
+                    <div class="form-group">
+                        <label for="appScriptUrl">Apps Script URL</label>
+                        <input type="url" id="appScriptUrl" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastSync">Last Data Sync</label>
+                        <input type="text" id="lastSync" readonly>
+                    </div>
+                    
+                    <button class="btn" onclick="testConnection()">Test Connection</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Replace with your actual Google Apps Script Web App URL
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            loadDashboardData();
+        });
+
+        // Authentication check
+        function checkAuthentication() {
+            const token = sessionStorage.getItem('adminToken');
+            const username = sessionStorage.getItem('adminUser');
+            
+            if (!token || !username) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            document.getElementById('adminUsername').textContent = username;
+            document.getElementById('appScriptUrl').value = APPS_SCRIPT_URL;
+        }
+
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked menu item
+            event.target.classList.add('active');
+            
+            // Load section-specific data
+            if (sectionId === 'users') {
+                loadUsers();
+            } else if (sectionId === 'dashboard') {
+                loadDashboardData();
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            showLoading(true);
+            
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'getDashboardStats',
+                        token: sessionStorage.getItem('adminToken')
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('totalUsers').textContent = result.data.totalUsers || 0;
+                    document.getElementById('activeUsers').textContent = result.data.activeUsers || 0;
+                    document.getElementById('pendingUsers').textContent = result.data.pendingUsers || 0;
+                    document.getElementById('lastSync').value = new Date().toLocaleString();
+                } else {
+                    showAlert('error', result.message || 'Failed to load dashboard data');
+                }
+            } catch (error) {
+                console.error('Dashboard data error:', error);
+                showAlert('error', 'Connection error while loading dashboard data');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            showLoading(true);
+            
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'getUsers',
+                        token: sessionStorage.getItem('adminToken')
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    populateUsersTable(result.data);
+                } else {
+                    showAlert('error', result.message || 'Failed to load users');
+                }
+            } catch (error) {
+                console.error('Load users error:', error);
+                showAlert('error', 'Connection error while loading users');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Populate users table
+        function populateUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.fullName || ''}</td>
+                    <td>${user.email || ''}</td>
+                    <td>${user.username || ''}</td>
+                    <td><span style="color: ${user.status === 'active' ? '#28a745' : user.status === 'pending' ? '#ffc107' : '#dc3545'}">${user.status || 'pending'}</span></td>
+                    <td>${user.createdDate ? new Date(user.createdDate).toLocaleDateString() : ''}</td>
+                    <td>
+                        <button class="btn btn-secondary" style="padding: 0.3rem 0.8rem; margin: 0;" onclick="deleteUser('${user.email}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add user form submission
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const userData = Object.fromEntries(formData);
+            
+            if (!userData.fullName || !userData.email || !userData.role) {
+                showAlert('error', 'Please fill in all required fields');
+                return;
+            }
+
+            showLoading(true);
+            document.getElementById('addUserBtn').disabled = true;
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'addUser',
+                        token: sessionStorage.getItem('adminToken'),
+                        ...userData
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Invitation email sent successfully to ${userData.email}`);
+                    clearForm();
+                    loadDashboardData(); // Refresh stats
+                } else {
+                    showAlert('error', result.message || 'Failed to add user');
+                }
+            } catch (error) {
+                console.error('Add user error:', error);
+                showAlert('error', 'Connection error while adding user');
+            } finally {
+                showLoading(false);
+                document.getElementById('addUserBtn').disabled = false;
+            }
+        });
+
+        // Delete user
+        async function deleteUser(email) {
+            if (!confirm(`Are you sure you want to delete user: ${email}?`)) {
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'deleteUser',
+                        token: sessionStorage.getItem('adminToken'),
+                        email: email
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', 'User deleted successfully');
+                    loadUsers(); // Refresh users table
+                    loadDashboardData(); // Refresh stats
+                } else {
+                    showAlert('error', result.message || 'Failed to delete user');
+                }
+            } catch (error) {
+                console.error('Delete user error:', error);
+                showAlert('error', 'Connection error while deleting user');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Utility functions
+        function clearForm() {
+            document.getElementById('addUserForm').reset();
+        }
+
+        function refreshData() {
+            loadDashboardData();
+            if (document.getElementById('users').classList.contains('active')) {
+                loadUsers();
+            }
+        }
+
+        function testConnection() {
+            showAlert('info', 'Testing connection...');
+            loadDashboardData();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminUser');
+            window.location.href = 'admin-login.html';
+        }
+
+        function showAlert(type, message) {
+            // Hide all alerts
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.display = 'none';
+            });
+            
+            // Show specific alert
+            const alertElement = document.getElementById(type + 'Alert');
+            alertElement.textContent = message;
+            alertElement.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
