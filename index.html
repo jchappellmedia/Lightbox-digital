@@ -543,13 +543,13 @@
             -webkit-backdrop-filter: blur(8px);
             opacity: 0;
             transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
         }
 
         .video-modal.show {
+            display: flex;
             opacity: 1;
         }
 
@@ -635,9 +635,13 @@
             -webkit-backdrop-filter: blur(20px);
             opacity: 0;
             transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .modal.show {
+            display: flex;
             opacity: 1;
         }
 
@@ -645,10 +649,9 @@
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
-            margin: 8% auto;
             padding: 3rem;
             border-radius: 24px;
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             position: relative;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -807,7 +810,7 @@
             <a href="about.html">About</a>
             <a href="contact.html">Contact</a>
         </nav>
-        <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+        <button class="mobile-nav-toggle" onclick="toggleMobileNav()" aria-label="Toggle mobile navigation">☰</button>
         <button class="cta-btn" onclick="openModal()">Let's Make Something Awesome!</button>
     </header>
 
@@ -937,7 +940,7 @@
     <!-- Video Modal -->
     <div id="videoModal" class="video-modal">
         <div class="video-modal-content">
-            <span class="video-close" onclick="closeVideoModal()">&times;</span>
+            <span class="video-close" onclick="closeVideoModal()" aria-label="Close video">&times;</span>
             <iframe id="videoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
@@ -945,7 +948,7 @@
     <!-- Contact Modal -->
     <div id="contactModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeModal()" aria-label="Close modal">&times;</span>
             <h2>Let's Make Something Awesome!</h2>
             <form id="contactForm">
                 <div class="form-group">
@@ -979,94 +982,176 @@
     </div>
 
     <script>
+        // Debug log to verify script is loading
+        console.log('Lightbox Digital script loaded');
+
+        // Modal functions with improved error handling
         function openModal() {
-            const modal = document.getElementById('contactModal');
-            modal.style.display = 'block';
-            // Force reflow to ensure display change is applied
-            modal.offsetHeight;
-            modal.classList.add('show');
+            console.log('Opening modal');
+            try {
+                const modal = document.getElementById('contactModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    // Force reflow to ensure display change is applied
+                    modal.offsetHeight;
+                    modal.classList.add('show');
+                    // Prevent body scroll
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    console.error('Contact modal not found');
+                }
+            } catch (error) {
+                console.error('Error opening modal:', error);
+            }
         }
 
         function closeModal() {
-            const modal = document.getElementById('contactModal');
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300); // Match the CSS transition duration
+            console.log('Closing modal');
+            try {
+                const modal = document.getElementById('contactModal');
+                if (modal) {
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error closing modal:', error);
+            }
         }
 
         function openVideoModal(videoId, title) {
-            const modal = document.getElementById('videoModal');
-            const player = document.getElementById('videoPlayer');
-            
-            // Set the video source with autoplay
-            player.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&color=f1c40f&title=1&byline=1&portrait=0`;
-            
-            modal.classList.add('show');
-            
-            // Prevent body scroll
-            document.body.style.overflow = 'hidden';
+            console.log('Opening video modal for:', videoId);
+            try {
+                const modal = document.getElementById('videoModal');
+                const player = document.getElementById('videoPlayer');
+                
+                if (modal && player && videoId) {
+                    // Set the video source with autoplay
+                    player.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&color=f1c40f&title=1&byline=1&portrait=0`;
+                    
+                    modal.classList.add('show');
+                    
+                    // Prevent body scroll
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    console.error('Video modal elements not found or invalid videoId');
+                }
+            } catch (error) {
+                console.error('Error opening video modal:', error);
+            }
         }
 
         function closeVideoModal() {
-            const modal = document.getElementById('videoModal');
-            const player = document.getElementById('videoPlayer');
-            
-            modal.classList.remove('show');
-            
-            setTimeout(() => {
-                player.src = ''; // Stop the video
-                document.body.style.overflow = ''; // Restore body scroll
-            }, 400); // Match the CSS transition duration
+            console.log('Closing video modal');
+            try {
+                const modal = document.getElementById('videoModal');
+                const player = document.getElementById('videoPlayer');
+                
+                if (modal && player) {
+                    modal.classList.remove('show');
+                    
+                    setTimeout(() => {
+                        player.src = ''; // Stop the video
+                        document.body.style.overflow = ''; // Restore body scroll
+                    }, 400);
+                }
+            } catch (error) {
+                console.error('Error closing video modal:', error);
+            }
         }
 
         function toggleMobileNav() {
-            const mobileNav = document.getElementById('mobileNav');
-            mobileNav.classList.toggle('show');
-        }
-
-        // Close mobile nav when clicking outside
-        document.addEventListener('click', function(event) {
-            const mobileNav = document.getElementById('mobileNav');
-            const toggle = document.querySelector('.mobile-nav-toggle');
-            
-            if (!mobileNav.contains(event.target) && !toggle.contains(event.target)) {
-                mobileNav.classList.remove('show');
-            }
-        });
-
-        // Close modals when clicking outside of them
-        window.onclick = function(event) {
-            const contactModal = document.getElementById('contactModal');
-            const videoModal = document.getElementById('videoModal');
-            
-            if (event.target == contactModal) {
-                closeModal();
-            }
-            
-            if (event.target == videoModal) {
-                closeVideoModal();
+            console.log('Toggling mobile nav');
+            try {
+                const mobileNav = document.getElementById('mobileNav');
+                if (mobileNav) {
+                    mobileNav.classList.toggle('show');
+                } else {
+                    console.error('Mobile nav not found');
+                }
+            } catch (error) {
+                console.error('Error toggling mobile nav:', error);
             }
         }
 
-        // Handle form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your inquiry! We\'ll be in touch soon to discuss your project.');
-            closeModal();
-            this.reset();
-        });
-
-        // Auto-close modals on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-                closeVideoModal();
-            }
-        });
-
-        // Preload video thumbnails for better performance
+        // Event listeners with proper error handling
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up event listeners');
+            
+            // Close mobile nav when clicking outside
+            document.addEventListener('click', function(event) {
+                try {
+                    const mobileNav = document.getElementById('mobileNav');
+                    const toggle = document.querySelector('.mobile-nav-toggle');
+                    
+                    if (mobileNav && toggle && !mobileNav.contains(event.target) && !toggle.contains(event.target)) {
+                        mobileNav.classList.remove('show');
+                    }
+                } catch (error) {
+                    console.error('Error in outside click handler:', error);
+                }
+            });
+
+            // Close modals when clicking outside of them
+            window.addEventListener('click', function(event) {
+                try {
+                    const contactModal = document.getElementById('contactModal');
+                    const videoModal = document.getElementById('videoModal');
+                    
+                    if (event.target === contactModal) {
+                        closeModal();
+                    }
+                    
+                    if (event.target === videoModal) {
+                        closeVideoModal();
+                    }
+                } catch (error) {
+                    console.error('Error in window click handler:', error);
+                }
+            });
+
+            // Handle form submission
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    
+                    try {
+                        // Get form data
+                        const formData = new FormData(this);
+                        const name = formData.get('name');
+                        const email = formData.get('email');
+                        const phone = formData.get('phone');
+                        const project = formData.get('project');
+                        
+                        // Basic validation
+                        if (!name || !email || !phone || !project) {
+                            alert('Please fill in all required fields.');
+                            return;
+                        }
+                        
+                        // Success message
+                        alert('Thank you for your inquiry! We\'ll be in touch soon to discuss your project.');
+                        closeModal();
+                        this.reset();
+                    } catch (error) {
+                        console.error('Error in form submission:', error);
+                        alert('There was an error submitting your form. Please try again.');
+                    }
+                });
+            }
+
+            // Auto-close modals on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    closeVideoModal();
+                }
+            });
+
             // Optimize hero video loading
             const heroVideo = document.querySelector('.hero-video iframe');
             const heroContainer = document.querySelector('.hero-video');
@@ -1089,7 +1174,7 @@
                 }, 1500);
             }
             
-            // Add loading states and optimize images
+            // Add loading states for video thumbnails
             const videoThumbnails = document.querySelectorAll('.case-study-video img');
             videoThumbnails.forEach(img => {
                 img.addEventListener('load', function() {
@@ -1110,6 +1195,11 @@
                 link.href = url;
                 document.head.appendChild(link);
             });
+        });
+
+        // Global error handler for debugging
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
         });
     </script>
 </body>
